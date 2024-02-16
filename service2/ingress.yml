@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qcm-ingress-service2
+spec:
+  rules:
+  - host: qcm.com
+    http:
+      paths:
+      - path: /add_question
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service2-service
+            port:
+              number: 5001
+      - path: /quiz
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service2-service
+            port:
+              number: 5001
+      - path: /submit
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service2-service
+            port:
+              number: 5001
+      - path: /list_results
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service2-service
+            port:
+              number: 5001
+
+
+
+

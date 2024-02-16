@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../static/qcm.js"></script>
+    <title>User Results</title>
+</head>
+<body>
+<div class="dashboard">
+        <div class="sidebar">
+            <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+            <nav class="menu">
+                <a href=""><button id="optionMenu"></button></a>
+                <a href="resultat.html"><button>Resultats</button></a>
+                <button type="button" onclick="logout()">Logout</button>
+            </nav>
+        </div>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Total Score</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+    // Fetch data from the Flask route
+    fetch('http://qcm.com/list_results')
+        .then(response => response.json())
+        .then(data => {
+            // Extract the results array from the JSON data
+            const results = data.results;
+
+            // Get the table body element
+            const tableBody = document.getElementById('resultsBody');
+
+            // Loop through the results and create table rows
+            results.forEach((result, index) => {
+                const row = document.createElement('tr');
+
+                // Create a table cell for the row number
+                const numberCell = document.createElement('td');
+                numberCell.textContent = index + 1;
+                row.appendChild(numberCell);
+
+                const usernameCell = document.createElement('td');
+                usernameCell.textContent = result.username;  // Assuming username is the property name
+                row.appendChild(usernameCell);
+
+                const totalScoreCell = document.createElement('td');
+                totalScoreCell.textContent = result.total_score;  // Assuming total_score is the property name
+                row.appendChild(totalScoreCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../static/qcm.js"></script>
+    <title>Quiz</title>
+    <style>
+        /* Your existing styles... */
+
+        #timer {
+            font-size: 20px;
+            color: #ff0000;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="sidebar">
+            <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+            <nav class="menu">
+                <a href=""><button id="optionMenu"></button></a>
+                <a href="resultat.html"><button>Resultats</button></a>
+                <button type="button" onclick="logout()">Logout</button>
+            </nav>
+        </div>
+    <div class="content">
+        <h1>Quiz</h1>
+        <div id="quiz-container"></div>
+        <div id="timer"></div>
+        <button id="nextButton" onclick="nextQuestion()">Next Question</button>
+        <form id="quiz-form" style="display: none;">
+            <input type="hidden" name="user_id" value="">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentQuestionIndex = 0;
+    let userID = localStorage.getItem('user_id');
+    let selectedAnswers = [];
+    let timer;
+
+    function displayQuestion(question) {
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = `
+            <p>${currentQuestionIndex + 1}. ${question.question}</p>
+            <ul>
+                ${question.options.map((option, optionIndex) => `
+                    <li>
+                        <input type="radio" name="q${currentQuestionIndex}" value="${optionIndex}" id="q${currentQuestionIndex}o${optionIndex}">
+                        <label for="q${currentQuestionIndex}o${optionIndex}">${option}</label>
+                    </li>
+                `).join('')}
+            </ul>
+            <hr>
+            <div id="timer">Time remaining: </div>
+        `;
+        startTimer(60); // Start the timer for the current question
+    }
+
+    function nextQuestion() {
+        clearInterval(timer);
+
+        const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+        selectedAnswers.push({
+            questionIndex: currentQuestionIndex,
+            answerIndex: selectedOption ? parseInt(selectedOption.value) : null
+        });
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            displayQuestion(questions[currentQuestionIndex]);
+            startTimer(60); // Start the timer for the next question
+        } else {
+            // All questions answered, show submit form
+            document.getElementById('quiz-form').style.display = 'block';
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('timer').style.display = 'none'; // Hide the timer for the last question
+            startTimerForSubmit(60); // Start the timer for form submission
+        }
+    }
+
+    function startTimer(seconds) {
+        let timeRemaining = seconds;
+
+        timer = setInterval(function () {
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                nextQuestion();
+            } else {
+                document.getElementById('timer').textContent = `Time remaining: ${timeRemaining} seconds`;
+                timeRemaining--;
+            }
+        }, 1000);
+    }
+
+    function startTimerForSubmit(seconds) {
+        let timeRemaining = seconds;
+
+        timer = setInterval(function () {
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                submitForm();
+            } else {
+                document.getElementById('timer').textContent = `Time remaining for submission: ${timeRemaining} seconds`;
+                timeRemaining--;
+            }
+        }, 1000);
+    }
+
+    function submitForm() {
+        const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+        selectedAnswers.push({
+            questionIndex: currentQuestionIndex,
+            answerIndex: selectedOption ? parseInt(selectedOption.value) : null
+        });
+
+        const dataToSend = { user_id: userID, answers: selectedAnswers };
+
+        fetch('http://qcm.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        })
+
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+            alert(data.message);
+        });
+    }
+
+    const questions = []; // Fetch questions and populate this array
+
+    // Fetch questions from the server
+    fetch('http://qcm.com/quiz')
+        .then(response => response.json())
+        .then(data => {
+            questions.push(...data.questions);
+            displayQuestion(questions[currentQuestionIndex]);
+        });
+
+    // Submit form
+    document.getElementById('quiz-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Ensure that userID is not null or undefined
+        if (!userID) {
+            alert('User ID not found. Please log in again.');
+            return;
+        }
+
+        submitForm();
+    });
+</script>
+</body>
+</html>
+
+</body>
+</html>

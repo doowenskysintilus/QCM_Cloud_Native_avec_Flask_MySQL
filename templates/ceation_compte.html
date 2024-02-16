@@ -1,0 +1,99 @@
+<!-- Formulaire d'inscription dans votre page HTML -->
+<style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+#loginForm {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#contentContainer {
+    margin-top: 20px;
+}
+    </style>
+<form id="registerForm">
+    <h2>Inscription</h2>
+    <label for="username">Nom d'utilisateur:</label>
+    <input type="text" id="username" name="username" required><br>
+    <label for="password">Mot de passe:</label>
+    <input type="password" id="password" name="password" required><br>
+    <input type="hidden" id="userType" value="joueur">
+    <button type="button" onclick="register()">S'inscrire</button>
+</form>
+
+<!-- Script JavaScript pour l'inscription -->
+<script>
+    function register() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const userType = document.getElementById('userType').value;
+
+        // Appel de la route d'inscription côté serveur
+        fetch('http://qcm.com/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                user_type: userType
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = 'index.html';
+
+            alert(data.message);
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'inscription:', error);
+        });
+    }
+</script>

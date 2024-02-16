@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../static/qcm.js"></script>
+    <title>Admin Quiz</title>
+    <style>
+
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #add-question-form {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+        <div class="sidebar">
+            <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+            <nav class="menu">
+                <a href=""><button id="optionMenu"></button></a>
+                <a href="resultat.html"><button>Resultats</button></a>
+                <button type="button" onclick="logout()">Logout</button>
+            </nav>
+        </div>
+        <div class="content">
+            <h1>Admin Quiz</h1>
+    <form id="add-question-form">
+        <div id="messageContainer"></div>
+        <label for="question">Question:</label>
+        <textarea id="question" name="question" rows="4" cols="50"></textarea>
+        <br>
+        <label for="option1">Option 1:</label>
+        <input type="text" id="option1" name="option1">
+        <br>
+        <label for="option2">Option 2:</label>
+        <input type="text" id="option2" name="option2">
+        <br>
+        <label for="option3">Option 3:</label>
+        <input type="text" id="option3" name="option3">
+        <br>
+        <label for="option4">Option 4:</label>
+        <input type="text" id="option4" name="option4">
+        <br>
+        <label for="correct_answer">Correct Answer:</label>
+        <input type="text" id="correct_answer" name="correct_answer">
+        <br>
+        <button type="submit">Ajouter Question</button>
+    </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    document.getElementById('add-question-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Récupération des valeurs du formulaire
+            const question = document.getElementById('question').value;
+            const option1 = document.getElementById('option1').value;
+            const option2 = document.getElementById('option2').value;
+            const option3 = document.getElementById('option3').value;
+            const option4 = document.getElementById('option4').value;
+            const correctAnswer = document.getElementById('correct_answer').value;
+
+            // Envoi des données au serveur
+            fetch('http://qcm.com/add_question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question,
+                    option1: option1,
+                    option2: option2,
+                    option3: option3,
+                    option4: option4,
+                    correct_answer: correctAnswer,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            });
+        });
+</script>

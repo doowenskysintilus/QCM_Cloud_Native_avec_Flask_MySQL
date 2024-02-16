@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../static/qcm.js"></script>
+    <title>Login</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+#loginForm {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#contentContainer {
+    margin-top: 20px;
+}
+    </style>
+</head>
+<body>
+    <form id="loginForm">
+        <h2>Login</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="button" onclick="login()">Login</button>
+        <a href="ceation_compte.html">Créer un compte</a>
+    </form>
+
+    <div id="contentContainer"></div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Clé API
+            const apiKey = 'votre_cle_secrete';
+
+            // Appel de l'API Flask
+            fetch('http://qcm.com/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Api-Key': apiKey
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Vérifier si l'authentification a réussi avant d'afficher le contenu
+                if (data.message.includes('Authentification réussie')) {
+
+                    // Enregistrer les informations de session dans localStorage
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('userType', data.user_type);
+                    localStorage.setItem('user_id', data.user_id);
+
+
+                    const userType = data.user_type; // Récupérer le type d'utilisateur
+
+                    // Afficher le contenu de la page professeur directement dans la page actuelle
+                    if (userType === 'admin') {
+                        window.location.href = 'new_question.html?username=' + data.username;
+                        //window.location.href = 'prof.html';
+                    } else if (userType === 'joueur') {
+                        window.location.href = 'quiz.html?username=' + data.username;
+                    } else {
+                        alert('Type d\'utilisateur non reconnu');
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'appel de l\'API:', error);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qcm-ingress-service1
+spec:
+  rules:
+  - host: qcm.com
+    http:
+      paths:
+      - path: /api/login
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service1-service
+            port:
+              number: 5000
+      - path: /register
+        pathType: Prefix
+        backend:
+          service:
+            name: application-service1-service
+            port:
+              number: 5000
+
+

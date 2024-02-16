@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-service2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application-service2
+  template:
+    metadata:
+      labels:
+        app: application-service2
+    spec:
+      containers:
+      - name: application-service2
+        image: guotinghao/application-service2:v1
+        ports:
+        - containerPort: 5001
+

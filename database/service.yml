@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-qcm-service
+spec:
+  selector:
+    app: mysql-qcm
+  ports:
+    - protocol: TCP
+      port: 3306   # Port du service MySQL dans le cluster
+      targetPort: 3306   # Port sur lequel le conteneur MySQL écoute
+  type: NodePort

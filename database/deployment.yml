@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-qcm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-qcm
+  template:
+    metadata:
+      labels:
+        app: mysql-qcm
+    spec:
+      containers:
+        - name: mysql-qcm
+          image: guotinghao/mysql_db:v1
+          ports:
+            - containerPort: 3306   # Port sur lequel le conteneur MySQL écoute
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: MYSQL_DATABASE
+              value: "qcm"
+
